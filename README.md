@@ -1,68 +1,110 @@
-Master of Files
-Sistema Distribuido de Gestión de Consultas y Persistencia
-Trabajo Práctico Cuatrimestral – Sistemas Operativos (UTN FRBA)
+# Master of Files
 
-📌 Descripción del proyecto
+## Sistema Distribuido de Gestión de Consultas y Persistencia
 
-Master of Files es una solución de software que simula un sistema distribuido complejo. El objetivo principal es la gestión eficiente de peticiones mediante la planificación de procesos, la administración de memoria segmentada por páginas y la persistencia de datos en un sistema de archivos propio.
+**Trabajo Práctico – Sistemas Operativos (UTN FRBA)**
 
-El proyecto implementa conceptos fundamentales de sistemas operativos, incluyendo comunicación por sockets, multihilos, planificación de corto plazo, paginación a demanda y gestión de sistemas de archivos basados en bloques.
+---
 
-🧱 Arquitectura general
-El sistema sigue una metodología modular, compuesto por cuatro procesos independientes que interactúan en red:
+## 📌 Descripción del proyecto
 
-Query Control Es el punto de entrada de las peticiones (Queries) al sistema, enviando instrucciones y prioridades para su ejecución.
+**Master of Files** es una solución de software que simula un sistema distribuido complejo.  
+El objetivo principal es la **gestión eficiente de peticiones** mediante la planificación de procesos, la administración de memoria segmentada por páginas y la persistencia de datos en un sistema de archivos propio.
 
-Master Actúa como el orquestador y planificador central. Administra los estados de las Queries (READY, EXEC, EXIT) utilizando algoritmos como FIFO o Prioridades con Desalojo y Aging.
+El proyecto implementa conceptos fundamentales de **Sistemas Operativos**, incluyendo:
 
-Worker Es el brazo ejecutor del sistema. Posee un intérprete de instrucciones y administra una memoria interna mediante un esquema de paginación simple a demanda con algoritmos de reemplazo (LRU o CLOCK-M).
+- Comunicación por **sockets**
+- Procesamiento **multihilo**
+- Planificación de corto plazo
+- **Paginación a demanda**
+- Gestión de **sistemas de archivos basados en bloques**
 
-Storage Representa el File System del sistema. Gestiona la persistencia física en bloques, implementando técnicas de deduplicación de datos mediante hashes MD5 y enlaces duros (hard links).
+---
 
-🚀 Características principales
-Planificación y Gestión (Master)
+## 🧱 Arquitectura general
 
-Algoritmos de Planificación: Soporte para FIFO y Prioridades dinámicas.
+El sistema sigue una **metodología modular**, compuesto por **cuatro procesos independientes** que interactúan a través de la red:
 
+### 🔹 Query Control
+Es el punto de entrada de las peticiones (*Queries*) al sistema.  
+Se encarga de enviar al Master las instrucciones a ejecutar junto con su prioridad.
 
-Mecanismo de Aging: Evita la inanición (starvation) aumentando la prioridad de procesos en espera.
+### 🔹 Master
+Actúa como el **orquestador y planificador central** del sistema.  
+Administra los estados de las Queries (**READY**, **EXEC**, **EXIT**) utilizando algoritmos como:
 
+- FIFO  
+- Prioridades con Desalojo  
+- Aging
 
-Multiprocesamiento: Capacidad de gestionar múltiples Workers de forma simultánea.
+### 🔹 Worker
+Es el **ejecutor de las Queries**.  
+Posee un intérprete de instrucciones y administra una **memoria interna** mediante un esquema de paginación simple a demanda, utilizando algoritmos de reemplazo como:
 
-Ejecución y Memoria (Worker)
+- LRU  
+- CLOCK-M  
 
-Query Interpreter: Parseo y ejecución de instrucciones como CREATE, READ, WRITE, TAG y COMMIT.
+### 🔹 Storage
+Representa el **File System del sistema**.  
+Gestiona la persistencia física en bloques e implementa técnicas de **deduplicación de datos** mediante hashes MD5 y enlaces duros (*hard links*).
 
+---
 
-Memoria Virtual: Paginación administrada con un malloc() único y soporte para archivos modificados (dirty pages).
+## 🚀 Características principales
 
-Persistencia y Optimización (Storage)
+### 🗂️ Planificación y Gestión (Master)
 
-Estructura FS: Basada en directorios nativos para representar Files y Tags, con archivos de metadatos y mapas de bits (bitmaps).
+- **Algoritmos de planificación**: Soporte para FIFO y Prioridades dinámicas.
+- **Mecanismo de Aging**: Evita la inanición (*starvation*) aumentando la prioridad de procesos en espera.
+- **Multiprocesamiento**: Capacidad de gestionar múltiples Workers de forma simultánea.
 
+---
 
-Deduplicación: Uso de MD5 para identificar bloques con contenido idéntico y optimizar el espacio físico.
+### 🧠 Ejecución y Memoria (Worker)
 
-🛠️ Tecnologías utilizadas
-Lenguajes y Herramientas de Desarrollo
+- **Query Interpreter**: Parseo y ejecución de instrucciones como:
+  - `CREATE`
+  - `READ`
+  - `WRITE`
+  - `TAG`
+  - `COMMIT`
+- **Memoria Virtual**:  
+  - Paginación administrada con un `malloc()` único.  
+  - Soporte para páginas modificadas (*dirty pages*).
 
-C (Lenguaje principal) 
+---
 
-GCC (Compilador)
+### 💾 Persistencia y Optimización (Storage)
 
+- **Estructura del File System**:
+  - Directorios nativos para representar *Files* y *Tags*
+  - Archivos de metadatos
+  - Mapas de bits (*bitmaps*)
+- **Deduplicación**:
+  - Uso de **MD5** para identificar bloques con contenido idéntico
+  - Optimización del espacio físico mediante reutilización de bloques
 
-Makefiles (Automatización de compilación) 
+---
 
-Bibliotecas e Infraestructura
+## 🛠️ Tecnologías utilizadas
 
-so-commons-library: Biblioteca de utilidades de la cátedra para manejo de logs, configuración y estructuras de datos.
+### Lenguajes y Herramientas de Desarrollo
 
+- **C** — Lenguaje principal  
+- **GCC** — Compilador  
+- **Makefiles** — Automatización de compilación  
 
-Linux/Ubuntu: Entorno de ejecución y desarrollo.
+---
 
+### Bibliotecas e Infraestructura
 
-POSIX Threads: Para la implementación de servidores multihilos y concurrencia.
+- **so-commons-library**  
+  Biblioteca provista por la cátedra para:
+  - Logs
+  - Archivos de configuración
+  - Estructuras de datos
+- **Linux / Ubuntu** — Entorno de desarrollo y ejecución
+- **POSIX Threads (pthreads)** — Concurrencia y servidores multihilo
+- **Sockets TCP/IP** — Comunicación distribuida entre módulos
 
-
-Sockets (TCP/IP): Para la comunicación distribuida entre módulos.
+---
