@@ -1,92 +1,68 @@
-# tp-scaffold
+Master of Files
+Sistema Distribuido de Gestión de Consultas y Persistencia
+Trabajo Práctico Cuatrimestral – Sistemas Operativos (UTN FRBA)
 
-Esta es una plantilla de proyecto diseñada para generar un TP de Sistemas
-Operativos de la UTN FRBA.
+📌 Descripción del proyecto
 
-## Dependencias
+Master of Files es una solución de software que simula un sistema distribuido complejo. El objetivo principal es la gestión eficiente de peticiones mediante la planificación de procesos, la administración de memoria segmentada por páginas y la persistencia de datos en un sistema de archivos propio.
 
-Para poder compilar y ejecutar el proyecto, es necesario tener instalada la
-biblioteca [so-commons-library] de la cátedra:
+El proyecto implementa conceptos fundamentales de sistemas operativos, incluyendo comunicación por sockets, multihilos, planificación de corto plazo, paginación a demanda y gestión de sistemas de archivos basados en bloques.
 
-```bash
-git clone https://github.com/sisoputnfrba/so-commons-library
-cd so-commons-library
-make debug
-make install
-```
+🧱 Arquitectura general
+El sistema sigue una metodología modular, compuesto por cuatro procesos independientes que interactúan en red:
 
-## Compilación y ejecución
+Query Control Es el punto de entrada de las peticiones (Queries) al sistema, enviando instrucciones y prioridades para su ejecución.
 
-Cada módulo del proyecto se compila de forma independiente a través de un
-archivo `makefile`. Para compilar un módulo, es necesario ejecutar el comando
-`make` desde la carpeta correspondiente.
+Master Actúa como el orquestador y planificador central. Administra los estados de las Queries (READY, EXEC, EXIT) utilizando algoritmos como FIFO o Prioridades con Desalojo y Aging.
 
-El ejecutable resultante de la compilación se guardará en la carpeta `bin` del
-módulo. Ejemplo:
+Worker Es el brazo ejecutor del sistema. Posee un intérprete de instrucciones y administra una memoria interna mediante un esquema de paginación simple a demanda con algoritmos de reemplazo (LRU o CLOCK-M).
 
-```sh
-cd kernel
-make
-./bin/kernel
-```
+Storage Representa el File System del sistema. Gestiona la persistencia física en bloques, implementando técnicas de deduplicación de datos mediante hashes MD5 y enlaces duros (hard links).
 
-## Importar desde Visual Studio Code
+🚀 Características principales
+Planificación y Gestión (Master)
 
-Para importar el workspace, debemos abrir el archivo `tp.code-workspace` desde
-la interfaz o ejecutando el siguiente comando desde la carpeta raíz del
-repositorio:
+Algoritmos de Planificación: Soporte para FIFO y Prioridades dinámicas.
 
-```bash
-code tp.code-workspace
-```
 
-## Checkpoint
+Mecanismo de Aging: Evita la inanición (starvation) aumentando la prioridad de procesos en espera.
 
-Para cada checkpoint de control obligatorio, se debe crear un tag en el
-repositorio con el siguiente formato:
 
-```
-checkpoint-{número}
-```
+Multiprocesamiento: Capacidad de gestionar múltiples Workers de forma simultánea.
 
-Donde `{número}` es el número del checkpoint, ejemplo: `checkpoint-1`.
+Ejecución y Memoria (Worker)
 
-Para crear un tag y subirlo al repositorio, podemos utilizar los siguientes
-comandos:
+Query Interpreter: Parseo y ejecución de instrucciones como CREATE, READ, WRITE, TAG y COMMIT.
 
-```bash
-git tag -a checkpoint-{número} -m "Checkpoint {número}"
-git push origin checkpoint-{número}
-```
 
-> [!WARNING]
-> Asegúrense de que el código compila y cumple con los requisitos del checkpoint
-> antes de subir el tag.
+Memoria Virtual: Paginación administrada con un malloc() único y soporte para archivos modificados (dirty pages).
 
-## Entrega
+Persistencia y Optimización (Storage)
 
-Para desplegar el proyecto en una máquina Ubuntu Server, podemos utilizar el
-script [so-deploy] de la cátedra:
+Estructura FS: Basada en directorios nativos para representar Files y Tags, con archivos de metadatos y mapas de bits (bitmaps).
 
-```bash
-git clone https://github.com/sisoputnfrba/so-deploy.git
-cd so-deploy
-./deploy.sh -r=release -p=utils -p=query_control -p=master -p=worker -p=storage "tp-{año}-{cuatri}-{grupo}"
-```
 
-El mismo se encargará de instalar las Commons, clonar el repositorio del grupo
-y compilar el proyecto en la máquina remota.
+Deduplicación: Uso de MD5 para identificar bloques con contenido idéntico y optimizar el espacio físico.
 
-> [!NOTE]
-> Ante cualquier duda, pueden consultar la documentación en el repositorio de
-> [so-deploy], o utilizar el comando `./deploy.sh --help`.
+🛠️ Tecnologías utilizadas
+Lenguajes y Herramientas de Desarrollo
 
-## Guías útiles
+C (Lenguaje principal) 
 
-- [Cómo interpretar errores de compilación](https://docs.utnso.com.ar/primeros-pasos/primer-proyecto-c#errores-de-compilacion)
-- [Cómo utilizar el debugger](https://docs.utnso.com.ar/guias/herramientas/debugger)
-- [Cómo configuramos Visual Studio Code](https://docs.utnso.com.ar/guias/herramientas/code)
-- **[Guía de despliegue de TP](https://docs.utnso.com.ar/guías/herramientas/deploy)**
+GCC (Compilador)
 
-[so-commons-library]: https://github.com/sisoputnfrba/so-commons-library
-[so-deploy]: https://github.com/sisoputnfrba/so-deploy
+
+Makefiles (Automatización de compilación) 
+
+Bibliotecas e Infraestructura
+
+so-commons-library: Biblioteca de utilidades de la cátedra para manejo de logs, configuración y estructuras de datos.
+
+
+Linux/Ubuntu: Entorno de ejecución y desarrollo.
+
+
+POSIX Threads: Para la implementación de servidores multihilos y concurrencia.
+
+
+Sockets (TCP/IP): Para la comunicación distribuida entre módulos.
